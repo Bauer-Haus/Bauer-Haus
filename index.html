@@ -4,266 +4,135 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BauerHaus - Native Mac Utilities</title>
-    <meta name="description" content="A digital studio crafting native, high-performance utilities for macOS. Home of WindowSmith.">
     
     <script type="speculationrules">
     {
-      "prerender": [
-        {
-          "source": "list",
-          "urls": ["WindowSmith/"],
-          "eagerness": "eager"
-        }
-      ]
+      "prerender": [{"source": "list", "urls": ["WindowSmith/"], "eagerness": "eager"}]
     }
     </script>
 
-    <link rel="prefetch" href="WindowSmith/">
-    
-    <link rel="preload" href="assets/icon.png" as="image">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://cdn.tailwindcss.com">
-    <link rel="preconnect" href="https://unpkg.com">
-
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <script src="https://unpkg.com/@phosphor-icons/web" defer></script>
-
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
     <style>
+        :root {
+            --bg: #020617;
+            --card: rgba(30, 41, 59, 0.4);
+            --border: rgba(255, 255, 255, 0.05);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --blue: #3b82f6;
+        }
+
+        /* Use the System Font Stack for instant "Native" feel */
         body {
-            font-family: 'Space Grotesk', sans-serif;
-            background-color: #020617; /* Very dark slate */
-            color: #f8fafc;
-            overflow-x: hidden;
-            min-height: 100vh;
+            margin: 0;
+            background: var(--bg);
+            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* Speed Optimization: Removes 300ms mobile click delay */
-        a, button { touch-action: manipulation; }
-
-        /* Ambient Background Mesh */
-        .ambient-light {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            background: 
-                radial-gradient(circle at 15% 50%, rgba(56, 189, 248, 0.08), transparent 25%),
-                radial-gradient(circle at 85% 30%, rgba(192, 132, 252, 0.08), transparent 25%);
-            pointer-events: none;
+        /* Ambient background without images */
+        .mesh {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background: radial-gradient(circle at 15% 50%, rgba(56, 189, 248, 0.08), transparent 25%),
+                        radial-gradient(circle at 85% 30%, rgba(192, 132, 252, 0.08), transparent 25%);
         }
 
-        /* Glass Cards */
-        .glass-card {
-            background: rgba(30, 41, 59, 0.4);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.02), 0 8px 40px rgba(0, 0, 0, 0.4);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .glass-card:hover {
-            transform: translateY(-8px);
-            background: rgba(30, 41, 59, 0.6);
-            border-color: rgba(255, 255, 255, 0.15);
-            box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1), 0 20px 60px rgba(0, 0, 0, 0.5);
-        }
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
         
-        /* Modal Glass */
-        .modal-glass {
-            background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-        }
+        header { padding: 48px 0; display: flex; justify-content: space-between; align-items: center; }
+        .logo-box { width: 32px; height: 32px; background: #fff; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: var(--bg); font-weight: 800; }
 
-        /* Text Gradient */
-        .text-gradient {
-            background: linear-gradient(to right, #ffffff, #94a3b8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+        .hero { padding: 80px 0; }
+        .hero h1 { font-size: clamp(3rem, 8vw, 5rem); font-weight: 800; letter-spacing: -0.05em; margin: 0 0 24px 0; line-height: 1; 
+                   background: linear-gradient(to right, #fff, var(--text-dim)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero p { font-size: 1.25rem; color: var(--text-dim); max-width: 600px; margin: 0; }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; padding-bottom: 100px; }
         
-        /* Scrollbar for legal text */
-        .legal-scroll::-webkit-scrollbar { width: 6px; }
-        .legal-scroll::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.05); border-radius: 4px; }
-        .legal-scroll::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 4px; }
-        .legal-scroll::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.3); }
+        .card { 
+            text-decoration: none; color: inherit; position: relative; overflow: hidden;
+            background: var(--card); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border); border-radius: 24px; padding: 32px;
+            transition: transform 0.4s cubic-bezier(0.2, 0, 0.2, 1), border 0.4s;
+        }
+        .card:hover { transform: translateY(-8px); border-color: rgba(255,255,255,0.2); }
+        
+        .card-icon { width: 64px; height: 64px; border-radius: 16px; margin-bottom: 24px; border: 1px solid var(--border); }
+        .card h3 { font-size: 1.5rem; margin: 0 0 8px 0; }
+        .card p { color: var(--text-dim); font-size: 0.95rem; margin-bottom: 32px; flex-grow: 1; }
+        
+        .badge { font-size: 10px; font-weight: 700; text-transform: uppercase; padding: 4px 12px; border-radius: 100px; background: rgba(59, 130, 246, 0.1); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.2); }
+
+        footer { border-top: 1px solid var(--border); padding: 48px 0; color: var(--text-dim); font-size: 14px; }
+
+        /* Modal Logic */
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 100; opacity: 0; transition: 0.3s; }
+        .modal.open { display: flex; opacity: 1; }
+        .modal-content { background: #0f172a; border: 1px solid var(--border); padding: 40px; border-radius: 32px; max-width: 500px; width: 90%; position: relative; }
+        .close-btn { position: absolute; top: 20px; right: 20px; background: none; border: none; color: #fff; cursor: pointer; font-size: 20px; }
     </style>
 </head>
-<body class="flex flex-col">
-
-    <div class="ambient-light"></div>
-
-    <header class="w-full py-8 md:py-12">
-        <div class="max-w-6xl mx-auto px-6 flex justify-between items-center">
-            <div class="flex items-center gap-2">
-                <div class="w-8 h-8 bg-white rounded flex items-center justify-center">
-                    <span class="text-[#020617] font-bold text-lg">B</span>
-                </div>
-                <span class="font-bold text-xl tracking-wide text-white">BauerHaus</span>
+<body>
+    <div class="mesh"></div>
+    <div class="container">
+        <header>
+            <div style="display:flex; align-items:center; gap:12px;">
+                <div class="logo-box">B</div>
+                <span style="font-weight:700; font-size:20px;">BauerHaus</span>
             </div>
-        </div>
-    </header>
+        </header>
 
-    <main class="flex-grow">
-        
-        <section class="max-w-6xl mx-auto px-6 py-20">
-            <h1 class="text-6xl md:text-8xl font-bold mb-6 tracking-tighter text-gradient">
-                Software for the<br>
-                Modern Mac.
-            </h1>
-            <p class="text-xl text-gray-400 max-w-2xl leading-relaxed">
-                A digital studio dedicated to crafting native, high-performance macOS utilities that feel like they belong. No Electron. No bloat. Just Swift.
-            </p>
-        </section>
+        <main>
+            <section class="hero">
+                <h1>Software for the<br>Modern Mac.</h1>
+                <p>Native, high-performance macOS utilities that feel like they belong. No Electron. Just Swift.</p>
+            </section>
 
-        <section class="max-w-6xl mx-auto px-6 pb-32">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-
-                <a href="WindowSmith/" rel="next" class="block group">
-                    <div class="glass-card rounded-3xl p-6 h-full flex flex-col relative overflow-hidden">
-                        <div class="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 blur-[80px] rounded-full pointer-events-none group-hover:bg-blue-500/20 transition-all duration-500"></div>
-
-                        <div class="flex justify-between items-start mb-8 z-10">
-                            <img src="assets/icon.png" alt="WindowSmith Icon" fetchpriority="high" class="w-16 h-16 rounded-2xl border border-white/10 group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                            
-                            <span class="px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 text-xs font-bold uppercase tracking-wider border border-blue-500/20">
-                                Released
-                            </span>
-                        </div>
-
-                        <h3 class="text-2xl font-bold text-white mb-2 z-10 group-hover:text-blue-200 transition-colors">WindowSmith</h3>
-                        <p class="text-gray-400 text-sm leading-relaxed mb-8 flex-grow z-10">
-                            End the window clutter. Arrange your screen instantly with visual snap layouts designed for the way you work.
-                        </p>
-
-                        <div class="flex items-center text-sm font-medium text-white group-hover:translate-x-2 transition-transform duration-300">
-                            View Project <i class="ph-bold ph-arrow-right ml-2"></i>
-                        </div>
+            <section class="grid">
+                <a href="WindowSmith/" class="card">
+                    <div style="display:flex; justify-content:space-between; align-items:start;">
+                        <img src="assets/icon.png" class="card-icon" alt="Icon">
+                        <span class="badge">Released</span>
+                    </div>
+                    <h3>WindowSmith</h3>
+                    <p>End the window clutter. Arrange your screen instantly with visual snap layouts designed for your workflow.</p>
+                    <div style="font-weight:600; display:flex; align-items:center; gap:8px;">
+                        View Project <span>→</span>
                     </div>
                 </a>
 
-                <div class="glass-card rounded-3xl p-6 h-full flex flex-col opacity-60">
-                    <div class="flex justify-between items-start mb-8">
-                        <div class="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center border border-white/5">
-                            <i class="ph-duotone ph-calendar text-3xl text-gray-500"></i>
-                        </div>
-                        <span class="px-3 py-1 rounded-full bg-white/5 text-gray-400 text-xs font-bold uppercase tracking-wider border border-white/5">
-                            Coming Soon
-                        </span>
-                    </div>
-                    <h3 class="text-2xl font-bold text-gray-200 mb-2">Project Two</h3>
-                    <p class="text-gray-500 text-sm leading-relaxed mb-8 flex-grow">
-                        A new productivity tool currently in development.
-                    </p>
+                <div class="card" style="opacity: 0.5;">
+                    <div class="card-icon" style="background: rgba(255,255,255,0.05);"></div>
+                    <h3>Project Two</h3>
+                    <p>A new productivity tool currently in development. Stay tuned.</p>
+                    <span class="badge" style="background:rgba(255,255,255,0.05); color:#999; border:none;">Soon</span>
                 </div>
+            </section>
+        </main>
 
-                <div class="glass-card rounded-3xl p-6 h-full flex flex-col opacity-60">
-                    <div class="flex justify-between items-start mb-8">
-                        <div class="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center border border-white/5">
-                            <i class="ph-duotone ph-lightning text-3xl text-gray-500"></i>
-                        </div>
-                        <span class="px-3 py-1 rounded-full bg-white/5 text-gray-400 text-xs font-bold uppercase tracking-wider border border-white/5">
-                            Concept
-                        </span>
-                    </div>
-                    <h3 class="text-2xl font-bold text-gray-200 mb-2">Project Three</h3>
-                    <p class="text-gray-500 text-sm leading-relaxed mb-8 flex-grow">
-                        Explorations into system-level automation.
-                    </p>
+        <footer>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <p>© 2026 BauerHaus. All rights reserved.</p>
+                <div style="display:flex; gap:24px;">
+                    <button onclick="toggleModal('privacy')" style="background:none; border:none; color:inherit; cursor:pointer;">Privacy</button>
                 </div>
             </div>
-        </section>
-    </main>
-
-    <footer class="w-full py-8 border-t border-white/5">
-        <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center text-gray-500 text-sm">
-            <p>&copy; 2026 BauerHaus. All rights reserved.</p>
-            <div class="flex gap-6 mt-4 md:mt-0">
-                <button onclick="openModal('privacyModal')" class="hover:text-white transition-colors focus:outline-none">Privacy</button>
-                <button onclick="openModal('legalModal')" class="hover:text-white transition-colors focus:outline-none">Legal</button>
-            </div>
-        </div>
-    </footer>
-
-    <div id="privacyModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
-        <div class="modal-glass p-8 rounded-3xl max-w-lg mx-6 relative transform scale-95 transition-transform duration-300">
-            <button onclick="closeModal('privacyModal')" class="absolute top-4 right-4 text-gray-400 hover:text-white p-2 rounded-full hover:bg-white/10 transition-all">
-                <i class="ph-bold ph-x text-xl"></i>
-            </button>
-            <div class="flex items-center gap-3 mb-6 text-blue-400">
-                <i class="ph-fill ph-shield-check text-3xl"></i>
-                <h2 class="text-2xl font-bold text-white tracking-tight">Privacy Commitment</h2>
-            </div>
-            <div class="space-y-4 text-gray-300 leading-relaxed">
-                <p>At BauerHaus, we believe your data belongs to you. Period.</p>
-                <div class="bg-white/5 p-4 rounded-xl border border-white/5">
-                    <ul class="space-y-3 text-sm">
-                        <li class="flex items-start gap-3">
-                            <i class="ph-fill ph-check-circle text-green-400 mt-0.5"></i>
-                            <span><strong>Zero Tracking:</strong> We do not collect, store, or transmit any analytics data.</span>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div class="mt-8">
-                <button onclick="closeModal('privacyModal')" class="w-full py-3 rounded-xl bg-white text-slate-900 font-bold hover:bg-gray-100 transition-colors">Understood</button>
-            </div>
-        </div>
+        </footer>
     </div>
 
-    <div id="legalModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
-        <div class="modal-glass p-8 rounded-3xl max-w-2xl mx-6 relative transform scale-95 transition-transform duration-300 w-full max-h-[80vh] flex flex-col">
-            <button onclick="closeModal('legalModal')" class="absolute top-4 right-4 text-gray-400 hover:text-white p-2 rounded-full hover:bg-white/10 transition-all">
-                <i class="ph-bold ph-x text-xl"></i>
-            </button>
-            <h2 class="text-2xl font-bold text-white mb-6">Legal Information</h2>
-            <div class="overflow-y-auto legal-scroll pr-2 text-sm text-gray-400 space-y-4">
-                <p>Standard software license terms apply. BauerHaus grants a limited license to use our utilities for personal use...</p>
-                </div>
-            <button onclick="closeModal('legalModal')" class="mt-6 w-full py-3 rounded-xl bg-white text-slate-900 font-bold hover:bg-gray-100">Close</button>
+    <div id="privacy" class="modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="toggleModal('privacy')">×</button>
+            <h2 style="margin-top:0">Privacy Commitment</h2>
+            <p style="color:var(--text-dim)">We believe your data belongs to you. Period. Our apps work 100% locally with zero tracking or analytics.</p>
         </div>
     </div>
 
     <script>
-        function openModal(modalId) {
-            const modal = document.getElementById(modalId);
-            const content = modal.querySelector('div');
-            modal.classList.remove('hidden');
-            setTimeout(() => {
-                modal.classList.remove('opacity-0');
-                content.classList.replace('scale-95', 'scale-100');
-            }, 10);
-            document.body.style.overflow = 'hidden'; 
+        function toggleModal(id) {
+            document.getElementById(id).classList.toggle('open');
         }
-
-        function closeModal(modalId) {
-            const modal = document.getElementById(modalId);
-            const content = modal.querySelector('div');
-            modal.classList.add('opacity-0');
-            content.classList.replace('scale-100', 'scale-95');
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                document.body.style.overflow = '';
-            }, 300);
-        }
-
-        // Close on clicking outside
-        ['privacyModal', 'legalModal'].forEach(id => {
-            const modal = document.getElementById(id);
-            if(modal) {
-                modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(id); });
-            }
-        });
     </script>
 </body>
 </html>
