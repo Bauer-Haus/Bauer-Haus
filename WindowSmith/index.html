@@ -1,292 +1,336 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WindowSmith - The Visual Window Manager for macOS</title>
-    <meta name="description" content="Forget the complex shortcuts. WindowSmith brings a visual snap grid to every window. Hover, click, and instantly organize your screen with precision layouts.">
+    <title>WindowSmith - The Visual Window Manager | BauerHaus</title>
+    <meta name="description" content="WindowSmith brings a visual snap grid to macOS. Hover, click, and instantly organize your screen with precision layouts.">
     
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Phosphor Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        slate: {
+                            850: '#151e32',
+                            900: '#0f172a',
+                            950: '#020617',
+                        }
+                    },
+                    animation: {
+                        'blob': 'blob 7s infinite',
+                        'fade-in': 'fadeIn 1s ease-out forwards',
+                    },
+                    keyframes: {
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0f172a; /* Dark background base */
+            background-color: #020617;
+            /* Signature BauerHaus Background Mesh */
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.15) 0px, transparent 50%), 
+                radial-gradient(at 100% 0%, rgba(168, 85, 247, 0.15) 0px, transparent 50%),
+                radial-gradient(at 50% 100%, rgba(15, 23, 42, 1) 0px, transparent 50%);
+            background-attachment: fixed;
             color: #f8fafc;
-            overflow-x: hidden;
         }
 
-        /* Glassmorphism Utilities */
-        .glass {
-            background: rgba(255, 255, 255, 0.05);
+        /* Glassmorphism System */
+        .glass-nav {
+            background: rgba(2, 6, 23, 0.7);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .glass-card {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .glass-card:hover {
-            transform: translateY(-5px);
-            background: rgba(30, 41, 59, 0.9);
-            border-color: rgba(255, 255, 255, 0.2);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            background: rgba(30, 41, 59, 0.6);
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -5px rgba(0, 0, 0, 0.3);
         }
 
-        /* Animated Gradient Text */
-        .gradient-text {
-            background: linear-gradient(to right, #60a5fa, #c084fc, #f472b6);
+        /* Text Gradient */
+        .text-gradient {
+            background: linear-gradient(to right, #60a5fa, #a78bfa, #f472b6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-size: 200% auto;
-            animation: gradientMove 5s linear infinite;
         }
 
-        @keyframes gradientMove {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
+        /* WindowSmith Specific: App Preview Styles */
+        .window-pane { transition: all 0.15s ease; }
+        .window-pane:hover { background-color: #3b82f6 !important; opacity: 1 !important; }
 
-        /* Hero Glow */
-        .hero-glow {
+        /* The App "Glow" behind the mockup */
+        .app-glow-bg {
             position: absolute;
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, rgba(15, 23, 42, 0) 70%);
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            inset: -20px;
+            background: conic-gradient(from 180deg at 50% 50%, #2a8af6 0deg, #a855f7 180deg, #2a8af6 360deg);
+            filter: blur(60px);
+            opacity: 0.2;
             z-index: -1;
-            pointer-events: none;
-        }
-
-        /* Window Pane Visuals */
-        .window-pane {
-            transition: all 0.2s ease;
-        }
-        .window-pane:hover {
-            background-color: #3b82f6 !important; /* Blue on hover */
-            opacity: 1 !important;
+            border-radius: 50%;
         }
     </style>
 </head>
-<body class="antialiased">
+<body class="antialiased selection:bg-blue-500/30 selection:text-blue-200">
 
-    <!-- Navigation -->
-    <nav class="fixed w-full z-50 top-0 start-0 border-b border-white/5 bg-[#0f172a]/80 backdrop-blur-md">
-        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between px-6 py-4">
-            <a href="../" class="flex items-center space-x-3 rtl:space-x-reverse">
-                <!-- UPDATED: Replaced Generic Icon with custom icon.png -->
-                <!-- Uses ../assets/ because this file is inside the WindowSmith/ folder -->
-                <img src="../assets/icon.png" alt="WindowSmith Logo" class="w-8 h-8 rounded-lg shadow-lg border border-white/10">
-                <span class="self-center text-xl font-bold whitespace-nowrap text-white">WindowSmith</span>
-            </a>
-            <div class="flex space-x-4">
-                <a href="#features" class="text-sm font-medium text-gray-300 hover:text-white transition-colors py-2 px-3">Features</a>
-                <!-- Link to App Store (Replace ID later) -->
-                <a href="https://apps.apple.com/app/id123456789" class="text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded-full transition-all shadow-[0_0_15px_rgba(37,99,235,0.5)]">
-                    Download
+    <nav class="fixed w-full z-50 top-0 start-0 glass-nav">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <a href="../" class="group flex items-center gap-2 text-sm font-medium text-gray-400 hover:text-white transition-colors">
+                    <i class="ph-bold ph-arrow-left group-hover:-translate-x-1 transition-transform"></i>
+                    BauerHaus
+                </a>
+                <span class="text-gray-700">/</span>
+                <a href="#" class="flex items-center gap-3">
+                    <img src="../assets/icon.png" alt="WindowSmith" class="w-8 h-8 rounded-lg shadow-inner bg-slate-800">
+                    <span class="text-lg font-bold tracking-tight text-white">WindowSmith</span>
+                </a>
+            </div>
+
+            <div class="hidden md:flex items-center gap-6">
+                <a href="#features" class="text-sm font-medium text-gray-400 hover:text-white transition-colors">Features</a>
+                <a href="https://apps.apple.com/app/id123456789" class="text-sm font-semibold text-white bg-white/10 hover:bg-white/20 border border-white/5 px-5 py-2.5 rounded-full transition-all flex items-center gap-2">
+                    <span>Download</span>
+                    <i class="ph-bold ph-download-simple"></i>
                 </a>
             </div>
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
-        <div class="hero-glow"></div>
+    <main class="relative pt-32 pb-20 overflow-hidden">
+        
         <div class="max-w-7xl mx-auto px-6 text-center relative z-10">
             
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full glass border border-white/10 text-xs font-medium text-blue-300 mb-8 animate-fade-in-up">
-                <span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
-                v1.0 Now Available for macOS
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-xs font-semibold text-blue-300 mb-8 animate-fade-in">
+                <span class="relative flex h-2 w-2">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                </span>
+                macOS v1.0 Now Available
             </div>
 
-            <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 leading-tight">
+            <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 leading-[1.1]">
                 Snap Windows <br />
-                <span class="gradient-text">Like a Pro.</span>
+                <span class="text-gradient">With Precision.</span>
             </h1>
             
             <p class="text-lg md:text-xl text-gray-400 mb-10 max-w-2xl mx-auto leading-relaxed">
-                Forget the complex shortcuts. WindowSmith brings a visual snap grid to every window. Hover, click, and instantly organize your screen with precision layouts.
+                Forget complex shortcuts. WindowSmith brings a visual snap grid to every window. Hover, click, and instantly organize your workspace.
             </p>
 
-            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <!-- MAIN DOWNLOAD BUTTON - Points to App Store -->
-                <!-- Replace 'id123456789' with your real App Store ID after submission -->
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-24">
                 <a href="https://apps.apple.com/app/id123456789" 
-                   class="group relative inline-flex items-center justify-center px-8 py-4 text-base font-bold text-white transition-all duration-200 bg-blue-600 rounded-full hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 shadow-[0_10px_30px_rgba(37,99,235,0.4)] hover:shadow-[0_15px_40px_rgba(37,99,235,0.6)] hover:-translate-y-1">
-                    <i class="ph-bold ph-app-store-logo mr-2 text-xl"></i> Download on App Store
-                    <div class="absolute inset-0 rounded-full ring-2 ring-white/20 group-hover:ring-white/40 transition-all"></div>
+                   class="group relative inline-flex items-center justify-center px-8 py-4 text-base font-bold text-white transition-all duration-200 bg-blue-600 rounded-full hover:bg-blue-500 hover:scale-105 shadow-[0_0_40px_-10px_rgba(37,99,235,0.5)]">
+                    <i class="ph-fill ph-apple-logo mr-2 text-xl"></i> Download for Mac
                 </a>
-                
-                <!-- Secondary Link back to your Main Portfolio (The Hub) -->
-                <a href="../" 
-                   class="inline-flex items-center justify-center px-8 py-4 text-base font-semibold text-gray-300 transition-all duration-200 glass rounded-full hover:text-white hover:bg-white/10">
-                    <i class="ph-bold ph-house mr-2"></i> BauerHaus
+                <a href="#demo" 
+                   class="inline-flex items-center justify-center px-8 py-4 text-base font-medium text-gray-300 transition-all duration-200 glass-card rounded-full hover:text-white">
+                    How it works
                 </a>
             </div>
 
-            <!-- App Interface Preview -->
-            <div class="mt-20 relative mx-auto max-w-4xl perspective-1000">
-                <!-- Main Window Mockup -->
-                <div class="relative rounded-xl border border-white/10 bg-[#1e293b]/50 backdrop-blur-xl shadow-2xl p-4 md:p-8 transform rotate-x-12 transition-transform duration-700 hover:rotate-0">
-                    <!-- Fake Menu Bar -->
-                    <div class="absolute top-0 left-0 right-0 h-8 bg-white/5 border-b border-white/5 rounded-t-xl flex items-center px-4 justify-end gap-2">
-                        <div class="flex items-center gap-1 opacity-50">
-                             <i class="ph-bold ph-wifi-high text-white text-xs"></i>
-                             <i class="ph-bold ph-battery-full text-white text-xs"></i>
-                             <span class="text-[10px] text-white font-medium">Mon 9:41 AM</span>
-                        </div>
-                        <!-- The App Icon in Menu Bar -->
-                        <div class="w-6 h-6 rounded flex items-center justify-center bg-blue-500/20 text-blue-400 relative group cursor-pointer border border-blue-500/30">
-                            <i class="ph-fill ph-layout"></i>
-                            
-                            <!-- The Popover (The App UI) -->
-                            <div class="absolute top-full right-0 mt-3 w-64 bg-[#1e1e2e] border border-white/10 rounded-xl shadow-2xl p-4 z-50 text-left">
-                                <div class="text-[10px] uppercase font-bold text-gray-500 mb-3 tracking-wider">Quick Snap</div>
-                                <div class="grid grid-cols-2 gap-3">
-                                    <!-- Visual Presets -->
-                                    <div class="h-14 rounded bg-white/5 border border-white/5 flex p-1 gap-1 group/item cursor-pointer hover:border-blue-500/50 transition-colors">
-                                        <div class="h-full w-1/2 bg-white/10 rounded-sm window-pane"></div>
-                                        <div class="h-full w-1/2 bg-white/10 rounded-sm window-pane"></div>
-                                    </div>
-                                    <div class="h-14 rounded bg-white/5 border border-white/5 flex p-1 gap-1 cursor-pointer hover:border-blue-500/50 transition-colors">
-                                        <div class="h-full w-2/3 bg-white/10 rounded-sm window-pane"></div>
-                                        <div class="h-full w-1/3 bg-white/10 rounded-sm window-pane"></div>
-                                    </div>
-                                    <div class="h-14 rounded bg-white/5 border border-white/5 flex p-1 gap-1 cursor-pointer hover:border-blue-500/50 transition-colors">
-                                        <div class="h-full w-1/2 bg-white/10 rounded-sm window-pane"></div>
-                                        <div class="flex flex-col w-1/2 gap-1 h-full">
-                                            <div class="h-1/2 w-full bg-white/10 rounded-sm window-pane"></div>
-                                            <div class="h-1/2 w-full bg-white/10 rounded-sm window-pane"></div>
+            <div id="demo" class="relative mx-auto max-w-5xl perspective-1000 group">
+                <div class="app-glow-bg transition-opacity duration-700 group-hover:opacity-40"></div>
+                
+                <div class="relative rounded-xl border border-white/10 bg-[#1e293b]/60 backdrop-blur-xl shadow-2xl p-1 md:p-2 transform transition-all duration-700 hover:scale-[1.01] hover:rotate-0 rotate-x-6">
+                    
+                    <div class="bg-[#0f172a] rounded-lg overflow-hidden relative h-[400px] md:h-[500px] w-full border border-white/5">
+                        
+                        <div class="absolute top-0 left-0 right-0 h-9 bg-white/5 border-b border-white/5 flex items-center px-4 justify-between z-20 backdrop-blur-md">
+                            <div class="flex gap-4 text-[11px] font-semibold text-white">
+                                <span class="opacity-90"></span>
+                                <span class="opacity-90">WindowSmith</span>
+                                <span class="opacity-60 font-normal">Edit</span>
+                                <span class="opacity-60 font-normal">View</span>
+                                <span class="opacity-60 font-normal">Window</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="w-6 h-6 rounded bg-blue-500 text-white flex items-center justify-center relative cursor-pointer shadow-[0_0_15px_rgba(59,130,246,0.6)]">
+                                    <i class="ph-bold ph-layout"></i>
+                                    
+                                    <div class="absolute top-full right-0 mt-4 w-72 bg-[#1e293b] border border-white/10 rounded-xl shadow-2xl p-5 z-50 text-left">
+                                        <div class="absolute -top-1.5 right-2 w-3 h-3 bg-[#1e293b] border-t border-l border-white/10 rotate-45"></div>
+                                        
+                                        <div class="flex justify-between items-center mb-4">
+                                            <span class="text-[10px] uppercase font-bold text-gray-500 tracking-wider">Snap Layout</span>
+                                            <span class="text-[10px] text-blue-400 cursor-pointer hover:underline">Settings</span>
+                                        </div>
+
+                                        <div class="grid grid-cols-2 gap-3">
+                                            <div class="h-16 rounded bg-black/20 border border-white/5 flex p-1 gap-1 cursor-pointer hover:border-blue-500/50 transition-colors group/item">
+                                                <div class="h-full w-1/2 bg-white/10 rounded-[2px] window-pane"></div>
+                                                <div class="h-full w-1/2 bg-white/10 rounded-[2px] window-pane"></div>
+                                            </div>
+                                            <div class="h-16 rounded bg-black/20 border border-white/5 flex p-1 gap-1 cursor-pointer hover:border-blue-500/50 transition-colors">
+                                                <div class="h-full w-2/3 bg-white/10 rounded-[2px] window-pane"></div>
+                                                <div class="h-full w-1/3 bg-white/10 rounded-[2px] window-pane"></div>
+                                            </div>
+                                            <div class="h-16 rounded bg-black/20 border border-white/5 flex p-1 gap-1 cursor-pointer hover:border-blue-500/50 transition-colors">
+                                                <div class="h-full w-1/2 bg-white/10 rounded-[2px] window-pane"></div>
+                                                <div class="flex flex-col w-1/2 gap-1 h-full">
+                                                    <div class="h-1/2 w-full bg-white/10 rounded-[2px] window-pane"></div>
+                                                    <div class="h-1/2 w-full bg-white/10 rounded-[2px] window-pane"></div>
+                                                </div>
+                                            </div>
+                                            <div class="h-16 rounded bg-black/20 border border-white/5 grid grid-cols-2 grid-rows-2 p-1 gap-1 cursor-pointer hover:border-blue-500/50 transition-colors">
+                                                <div class="bg-white/10 rounded-[2px] window-pane"></div>
+                                                <div class="bg-white/10 rounded-[2px] window-pane"></div>
+                                                <div class="bg-white/10 rounded-[2px] window-pane"></div>
+                                                <div class="bg-white/10 rounded-[2px] window-pane"></div>
+                                            </div>
                                         </div>
                                     </div>
-                                    <!-- 2x2 Grid (Quadrant) -->
-                                    <div class="h-14 rounded bg-white/5 border border-white/5 grid grid-cols-2 grid-rows-2 p-1 gap-1 cursor-pointer hover:border-blue-500/50 transition-colors">
-                                        <div class="bg-white/10 rounded-sm window-pane"></div>
-                                        <div class="bg-white/10 rounded-sm window-pane"></div>
-                                        <div class="bg-white/10 rounded-sm window-pane"></div>
-                                        <div class="bg-white/10 rounded-sm window-pane"></div>
+                                    </div>
+                                <span class="text-xs font-medium text-white opacity-90">Mon 9:41 AM</span>
+                            </div>
+                        </div>
+
+                        <div class="absolute inset-0 top-9 bg-gradient-to-br from-indigo-950 via-slate-900 to-slate-950 flex items-center justify-center overflow-hidden">
+                            <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(#6366f1 1px, transparent 1px); background-size: 30px 30px;"></div>
+
+                            <div class="absolute left-6 top-6 bottom-6 w-[55%] bg-[#1e293b] rounded-lg border border-white/10 shadow-2xl flex flex-col animate-fade-in" style="animation-delay: 0.1s">
+                                <div class="h-8 border-b border-white/5 flex items-center px-3 gap-2">
+                                    <div class="flex gap-1.5">
+                                        <div class="w-2.5 h-2.5 rounded-full bg-red-500/80"></div>
+                                        <div class="w-2.5 h-2.5 rounded-full bg-yellow-500/80"></div>
+                                        <div class="w-2.5 h-2.5 rounded-full bg-green-500/80"></div>
                                     </div>
                                 </div>
-                                <div class="mt-4 pt-4 border-t border-white/10">
-                                    <div class="text-[10px] uppercase font-bold text-gray-500 mb-2 tracking-wider">Saved Presets</div>
-                                    <div class="text-xs text-gray-400 italic">No saved presets yet...</div>
+                                <div class="flex-1 flex items-center justify-center text-slate-700">
+                                    <i class="ph-duotone ph-code text-6xl opacity-50"></i>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Desktop Background Placeholder -->
-                    <div class="w-full h-64 md:h-96 rounded bg-gradient-to-br from-indigo-900 via-slate-800 to-slate-900 flex items-center justify-center relative overflow-hidden">
-                        <!-- Mock Windows -->
-                        <div class="absolute left-4 top-4 bottom-4 w-[48%] bg-[#0f172a] rounded-lg border border-white/10 shadow-xl flex flex-col">
-                            <div class="h-6 border-b border-white/5 flex items-center px-2 gap-1.5">
-                                <div class="w-2 h-2 rounded-full bg-red-500"></div>
-                                <div class="w-2 h-2 rounded-full bg-yellow-500"></div>
-                                <div class="w-2 h-2 rounded-full bg-green-500"></div>
+
+                            <div class="absolute right-6 top-6 h-[45%] w-[38%] bg-[#1e293b] rounded-lg border border-white/10 shadow-2xl flex flex-col animate-fade-in" style="animation-delay: 0.2s">
+                                <div class="h-8 border-b border-white/5 flex items-center px-3 gap-2">
+                                    <div class="flex gap-1.5">
+                                        <div class="w-2.5 h-2.5 rounded-full bg-slate-600"></div>
+                                        <div class="w-2.5 h-2.5 rounded-full bg-slate-600"></div>
+                                    </div>
+                                    <div class="bg-black/20 h-4 rounded w-full ml-2"></div>
+                                </div>
+                                <div class="flex-1 flex items-center justify-center text-slate-700">
+                                    <i class="ph-duotone ph-globe text-5xl opacity-50"></i>
+                                </div>
                             </div>
-                            <div class="flex-1 flex items-center justify-center text-slate-600">
-                                <i class="ph-duotone ph-code text-4xl"></i>
+
+                             <div class="absolute right-6 bottom-6 h-[45%] w-[38%] bg-[#1e293b] rounded-lg border border-white/10 shadow-2xl flex flex-col animate-fade-in" style="animation-delay: 0.3s">
+                                <div class="h-8 border-b border-white/5 flex items-center px-3 gap-2">
+                                    <div class="flex gap-1.5">
+                                        <div class="w-2.5 h-2.5 rounded-full bg-red-500/80"></div>
+                                        <div class="w-2.5 h-2.5 rounded-full bg-yellow-500/80"></div>
+                                        <div class="w-2.5 h-2.5 rounded-full bg-green-500/80"></div>
+                                    </div>
+                                </div>
+                                <div class="flex-1 flex items-center justify-center text-slate-700">
+                                    <i class="ph-duotone ph-chat-circle-text text-5xl opacity-50"></i>
+                                </div>
                             </div>
-                        </div>
-                        <div class="absolute right-4 top-4 h-[45%] w-[45%] bg-[#0f172a] rounded-lg border border-white/10 shadow-xl flex flex-col">
-                             <div class="h-6 border-b border-white/5 flex items-center px-2 gap-1.5">
-                                <div class="w-2 h-2 rounded-full bg-red-500"></div>
-                                <div class="w-2 h-2 rounded-full bg-yellow-500"></div>
-                                <div class="w-2 h-2 rounded-full bg-green-500"></div>
-                            </div>
-                            <div class="flex-1 flex items-center justify-center text-slate-600">
-                                <i class="ph-duotone ph-globe text-3xl"></i>
-                            </div>
-                        </div>
-                         <div class="absolute right-4 bottom-4 h-[45%] w-[45%] bg-[#0f172a] rounded-lg border border-white/10 shadow-xl flex flex-col">
-                             <div class="h-6 border-b border-white/5 flex items-center px-2 gap-1.5">
-                                <div class="w-2 h-2 rounded-full bg-red-500"></div>
-                                <div class="w-2 h-2 rounded-full bg-yellow-500"></div>
-                                <div class="w-2 h-2 rounded-full bg-green-500"></div>
-                            </div>
-                            <div class="flex-1 flex items-center justify-center text-slate-600">
-                                <i class="ph-duotone ph-chat-circle-text text-3xl"></i>
-                            </div>
+
                         </div>
                     </div>
                 </div>
             </div>
 
         </div>
-    </section>
+    </main>
 
-    <!-- Features Section -->
-    <section id="features" class="py-24 bg-slate-900/50">
+    <section id="features" class="py-24 relative">
+        <div class="absolute inset-0 bg-slate-900/50 skew-y-3 transform origin-bottom-left -z-10"></div>
+        
         <div class="max-w-7xl mx-auto px-6">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Why WindowSmith?</h2>
-                <p class="text-gray-400 max-w-2xl mx-auto">Native performance, zero bloat, and the features you actually need.</p>
+            <div class="text-center mb-20">
+                <h2 class="text-3xl md:text-4xl font-bold text-white mb-6">Built for Power Users</h2>
+                <p class="text-gray-400 max-w-2xl mx-auto text-lg">Native performance, zero bloat, and the features you actually need to manage a 4K workspace.</p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <!-- Feature 1 -->
-                <div class="glass-card p-8 rounded-2xl">
-                    <div class="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center text-blue-400 mb-6">
-                        <i class="ph-fill ph-grid-four text-2xl"></i>
+                <div class="glass-card p-8 rounded-2xl group">
+                    <div class="w-14 h-14 bg-blue-500/10 border border-blue-500/20 rounded-xl flex items-center justify-center text-blue-400 mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i class="ph-fill ph-grid-four text-3xl"></i>
                     </div>
                     <h3 class="text-xl font-bold text-white mb-3">Visual Snap Menu</h3>
                     <p class="text-gray-400 leading-relaxed">
-                        Forget dragging windows to corners. Just click the menu bar icon and select your layout visually. Perfect for complex grids.
+                        Drag to corners? Ancient history. Click the menu bar icon and select your layout visually. Perfect for ultrawide monitors and complex grids.
                     </p>
                 </div>
 
-                <!-- Feature 2 -->
-                <div class="glass-card p-8 rounded-2xl">
-                    <div class="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center text-purple-400 mb-6">
-                        <i class="ph-fill ph-keyboard text-2xl"></i>
+                <div class="glass-card p-8 rounded-2xl group">
+                    <div class="w-14 h-14 bg-purple-500/10 border border-purple-500/20 rounded-xl flex items-center justify-center text-purple-400 mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i class="ph-fill ph-keyboard text-3xl"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-white mb-3">Smart Hotkeys</h3>
+                    <h3 class="text-xl font-bold text-white mb-3">Keyboard First</h3>
                     <p class="text-gray-400 leading-relaxed">
-                        Use global shortcuts to trigger layouts, then cycle through positions instantly with arrow keys. Or "Throw" windows between monitors.
+                        Use global hotkeys to trigger layouts, then cycle through positions instantly. "Throw" windows between displays with a single keystroke.
                     </p>
                 </div>
 
-                <!-- Feature 3 -->
-                <div class="glass-card p-8 rounded-2xl">
-                    <div class="w-12 h-12 bg-pink-500/20 rounded-xl flex items-center justify-center text-pink-400 mb-6">
-                        <i class="ph-fill ph-ruler text-2xl"></i>
+                <div class="glass-card p-8 rounded-2xl group">
+                    <div class="w-14 h-14 bg-pink-500/10 border border-pink-500/20 rounded-xl flex items-center justify-center text-pink-400 mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i class="ph-fill ph-sliders-horizontal text-3xl"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-white mb-3">Custom Grids</h3>
+                    <h3 class="text-xl font-bold text-white mb-3">Custom Presets</h3>
                     <p class="text-gray-400 leading-relaxed">
-                        Need a 5-column layout for your ultrawide monitor? Create and save your own custom grid presets in seconds.
+                        Define your own 5-column grids or specific pixel-perfect zones. Save them as presets and access them via the menu or shortcuts.
                     </p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="border-t border-white/5 py-12 bg-[#0f172a]">
-        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center">
-            <div class="mb-4 md:mb-0">
-                <span class="text-lg font-bold text-white">WindowSmith</span>
-                <p class="text-sm text-gray-500 mt-1">© 2026 BauerHaus. All rights reserved.</p>
+    <footer class="border-t border-white/5 py-12 bg-[#020617] relative">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center text-white font-bold text-xs">WS</div>
+                <div class="text-sm text-gray-400">
+                    <span class="text-white font-semibold">WindowSmith</span> by BauerHaus
+                </div>
             </div>
-            <!-- Removed Social Icons and Links -->
+            
+            <div class="flex gap-8 text-sm font-medium text-gray-500">
+                <a href="#" class="hover:text-white transition-colors">Privacy</a>
+                <a href="#" class="hover:text-white transition-colors">Support</a>
+                <a href="../" class="hover:text-white transition-colors">More Apps</a>
+            </div>
+
+            <p class="text-xs text-gray-600">© 2026 BauerHaus Design.</p>
         </div>
     </footer>
 
