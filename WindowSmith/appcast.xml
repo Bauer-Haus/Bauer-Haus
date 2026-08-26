@@ -1,0 +1,15 @@
+<?xml version="1.0" standalone="yes"?>
+<rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
+    <channel>
+        <title>WindowSmith</title>
+        <item>
+            <title>1.0</title>
+            <pubDate>Wed, 26 Aug 2026 18:32:20 -0500</pubDate>
+            <link>https://bauerhaus.io/WindowSmith/</link>
+            <sparkle:version>9</sparkle:version>
+            <sparkle:shortVersionString>1.0</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>13.0</sparkle:minimumSystemVersion>
+            <enclosure url="https://bauerhaus.io/WindowSmith/downloads/WindowSmith-1.0.dmg" length="7450721" type="application/octet-stream" sparkle:edSignature="61hnUm5wqMG4qzONoyfKsIN49PBW05x/OrcJlvqZKUoaE7ACUeC/zvdArH0y2wD0c92Dc+r3lzik/lcbmMS1CQ=="/>
+        </item>
+    </channel>
+</rss>
