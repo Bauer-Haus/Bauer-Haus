@@ -1,0 +1,97 @@
+# Toggle the public site between its real pages and the maintenance notice.
+#
+# Run it from the Actions tab (or the GitHub mobile app):
+#   Actions > Maintenance mode > Run workflow > pick "on" or "off"
+#
+# A page is "in maintenance" when its real content is parked beside it as
+# index.live.html. Turning maintenance on parks the real page and drops
+# maintenance.html in its place; turning it off moves the real page back.
+# Both directions are safe to run twice - a no-op still redeploys.
+name: Maintenance mode
+
+on:
+  workflow_dispatch:
+    inputs:
+      state:
+        description: "Take the site down for maintenance, or bring it back"
+        required: true
+        type: choice
+        default: "on"
+        options:
+          - "on"
+          - "off"
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+# Share the deploy lock with the regular Pages workflow so the two can never
+# race each other onto the live site.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  toggle:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Swap pages
+        env:
+          STATE: ${{ inputs.state }}
+        run: |
+          set -euo pipefail
+
+          # Every directory whose index.html should be swapped. Add a line here
+          # if the site grows another page that belongs behind maintenance.
+          PAGES=("." "WindowSmith")
+
+          for dir in "${PAGES[@]}"; do
+            if [ "$STATE" = "on" ]; then
+              if [ -f "$dir/index.live.html" ]; then
+                echo "$dir: already in maintenance, leaving as is"
+              else
+                mv "$dir/index.html" "$dir/index.live.html"
+                cp maintenance.html "$dir/index.html"
+                echo "$dir: taken down"
+              fi
+            else
+              if [ -f "$dir/index.live.html" ]; then
+                mv -f "$dir/index.live.html" "$dir/index.html"
+                echo "$dir: restored"
+              else
+                echo "$dir: already live, leaving as is"
+              fi
+            fi
+          done
+
+      - name: Commit the swap
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet && git diff --cached --quiet; then
+            echo "Nothing changed - redeploying the current state."
+          else
+            git add -A
+            git commit -m "Maintenance mode: ${{ inputs.state }}"
+            git push
+          fi
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
