@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BauerHaus - Native Mac Utilities</title>
+
+<script type="speculationrules">
+{
+  "prerender": [{"source": "list", "urls": ["WindowSmith/"], "eagerness": "eager"}]
+}
+</script>
+
+<style>
+    :root {
+        --bg: #000000;
+        --surface: #121212;
+        --surface-hover: #1c1c1e;
+        --border: rgba(255, 255, 255, 0.1);
+        --border-highlight: rgba(255, 255, 255, 0.2);
+        --text-main: #f5f5f7;
+        --text-dim: #86868b;
+        --accent: #2997ff;
+        --ease: cubic-bezier(0.32, 0.72, 0, 1);
+    }
+
+    body {
+        margin: 0;
+        background-color: var(--bg);
+        color: var(--text-main);
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        overflow-x: hidden;
+    }
+
+    .ambient-light {
+        position: fixed;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: 
+            radial-gradient(circle at 50% 50%, rgba(41, 151, 255, 0.08), transparent 40%),
+            radial-gradient(circle at 80% 20%, rgba(100, 100, 255, 0.05), transparent 40%);
+        z-index: -1;
+        animation: pulse 10s ease-in-out infinite alternate;
+        pointer-events: none;
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(1); opacity: 0.8; }
+        100% { transform: scale(1.1); opacity: 1; }
+    }
+
+    .container {
+        max-width: 100%;
+        margin: 0 auto;
+        padding: 0 24px;
+    }
+
+    header {
+        padding: 24px 0;
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        mask-image: linear-gradient(to bottom, black 100%, transparent 100%);
+    }
+
+    .nav-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .logo {
+        font-weight: 600;
+        font-size: 14px;
+        letter-spacing: -0.01em;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .logo-box {
+        width: 20px;
+        height: 20px;
+        background: var(--text-main);
+        color: var(--bg);
+        border-radius: 4px;
+        display: grid;
+        place-items: center;
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .hero {
+        padding: 120px 0 100px;
+        text-align: center;
+    }
+
+    .hero h1 {
+        font-size: clamp(3rem, 10vw, 5.5rem);
+        font-weight: 600;
+        letter-spacing: -0.03em;
+        line-height: 1.05;
+        margin: 0 auto;
+        text-align: left;
+        max-width: 800px;
+        background: linear-gradient(180deg, #fff 0%, #a1a1a6 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-wrap: balance;
+    }
+
+    .hero p {
+        font-size: 1.5rem;
+        color: var(--text-dim);
+        line-height: 1.4;
+        text-align: left;
+        max-width: 580px;
+        margin: 0 auto;
+        font-weight: 400;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+        gap: 24px;
+        padding-bottom: 120px;
+    }
+
+    .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 28px;
+        padding: 32px;
+        text-decoration: none;
+        color: inherit;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.4s var(--ease);
+        display: flex;
+        flex-direction: column;
+        backdrop-filter: blur(40px) saturate(180%);
+        -webkit-backdrop-filter: blur(40px) saturate(180%);
+    }
+
+    .card::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: 28px;
+        padding: 1px;
+        background: linear-gradient(to bottom, rgba(255,255,255,0.1), transparent);
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        pointer-events: none;
+    }
+
+    .card:hover {
+        background: var(--surface-hover);
+        transform: translateY(-4px) scale(1.01);
+        border-color: var(--border-highlight);
+        box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5);
+    }
+
+    .card:active {
+        transform: scale(0.98);
+    }
+
+    .card-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 40px;
+    }
+
+    .card-icon {
+        width: 56px;
+        height: 56px;
+        background: #000;
+        border-radius: 14px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        object-fit: cover;
+    }
+
+    .card-content h3 {
+        font-size: 1.75rem;
+        font-weight: 600;
+        margin: 0 0 12px 0;
+        letter-spacing: -0.01em;
+    }
+
+    .card-content p {
+        color: var(--text-dim);
+        font-size: 1.05rem;
+        margin: 0 0 24px 0;
+        line-height: 1.6;
+    }
+
+    .cta-link {
+        font-size: 15px;
+        font-weight: 500;
+        color: var(--accent);
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .badge {
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        padding: 6px 12px;
+        border-radius: 100px;
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    footer {
+        border-top: 1px solid var(--border);
+        padding: 60px 0;
+        color: var(--text-dim);
+        font-size: 13px;
+    }
+
+    .footer-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .footer-link {
+        background: none;
+        border: none;
+        color: var(--text-dim);
+        cursor: pointer;
+        transition: color 0.2s;
+        font-size: 13px;
+        padding: 0;
+    }
+    .footer-link:hover { color: var(--text-main); }
+
+    .modal {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.4);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 100;
+        opacity: 0;
+        transition: opacity 0.3s var(--ease);
+    }
+    .modal.open { display: flex; opacity: 1; }
+
+    .modal-content {
+        background: #1c1c1e;
+        border: 1px solid var(--border);
+        padding: 40px;
+        border-radius: 24px;
+        max-width: 440px;
+        width: 90%;
+        position: relative;
+        box-shadow: 0 40px 80px rgba(0,0,0,0.5);
+        transform: scale(0.95);
+        transition: transform 0.3s var(--ease);
+    }
+    .modal.open .modal-content { transform: scale(1); }
+
+    .close-btn {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: rgba(255,255,255,0.1);
+        border: none;
+        color: #fff;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: grid;
+        place-items: center;
+        transition: background 0.2s;
+    }
+    .close-btn:hover { background: rgba(255,255,255,0.2); }
+
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
+</head>
+<body>
+
+<div class="ambient-light"></div>
+
+<header>
+    <div class="container">
+        <div class="nav-content">
+            <div class="logo">
+                <div class="logo-box">B</div>
+                <span>BauerHaus</span>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="container">
+    <main>
+        <section class="hero">
+            <h1 style="opacity:0; animation: fadeUp 0.8s var(--ease) forwards; text-align: left; margin: 0;">
+                Software for the<br>Modern Mac.
+            </h1>
+            <p style="opacity:0; animation: fadeUp 0.8s var(--ease) 0.1s forwards; text-align: left; margin: 0;">
+                True native utilities. Zero Electron. Pure Swift.
+            </p>
+        </section>
+
+        <section class="grid">
+            <a href="WindowSmith/" class="card" style="opacity:0; animation: fadeUp 0.8s var(--ease) 0.2s forwards;">
+                <div class="card-top">
+                    <img src="assets/icon.png" class="card-icon" alt="App Icon">
+                    <span class="badge" style="background: rgba(41, 151, 255, 0.15); color: #2997ff; border-color: rgba(41, 151, 255, 0.3);">
+                        Available Now
+                    </span>
+                </div>
+                <div class="card-content">
+                    <h3>WindowSmith</h3>
+                    <p>End the window clutter. Arrange your screen instantly with visual snap layouts designed for your workflow.</p>
+                    <div class="cta-link">
+                        View Project <span>→</span>
+                    </div>
+                </div>
+            </a>
+
+            <div class="card" style="opacity:0; animation: fadeUp 0.8s var(--ease) 0.3s forwards; filter: grayscale(1); cursor: default;">
+                <div class="card-top">
+                    <div class="card-icon" style="background: linear-gradient(135deg, #333, #222);"></div>
+                    <span class="badge">In Development</span>
+                </div>
+                <div class="card-content">
+                    <h3>Project Two</h3>
+                    <p>A new productivity tool is currently in the works. Stay tuned for updates later this year.</p>
+                    <div class="cta-link" style="color: var(--text-dim);">
+                        Coming Soon
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>Copyright © 2026 BauerHaus LLC. All rights reserved.</p>
+            <p class="footer-credit">Founded in the USA. 🇺🇸</p>
+            <div style="display: flex; gap: 20px;">
+                <button class="footer-link" onclick="toggleModal('about')">About</button>
+                <button class="footer-link" onclick="toggleModal('contact')">Contact</button>
+                <button class="footer-link" onclick="toggleModal('privacy')">Privacy Policy</button>
+            </div>
+        </div>
+    </footer>
+</div>
+
+<div id="about" class="modal">
+    <div class="modal-content">
+        <button class="close-btn" onclick="toggleModal('about')">×</button>
+        <h2 style="margin-top:0; font-size: 1.5rem; letter-spacing: -0.02em;">About BauerHaus.</h2>
+        <p style="color:var(--text-dim); line-height: 1.6;">
+            We build high-quality, native utilities designed exclusively for macOS. Our mission is to create software that feels right at home on your machine: fast, efficient, and crafted with pure Swift.
+        </p>
+    </div>
+</div>
+
+<div id="privacy" class="modal">
+    <div class="modal-content">
+        <button class="close-btn" onclick="toggleModal('privacy')">×</button>
+        <h2 style="margin-top:0; font-size: 1.5rem; letter-spacing: -0.02em;">Your Data is Yours.</h2>
+        <p style="color:var(--text-dim); line-height: 1.6;">
+            We believe software should serve you, not track you. Our apps work 100% locally on your machine. No analytics, no telemetry, no cloud requirement.
+        </p>
+    </div>
+</div>
+
+<div id="contact" class="modal">
+    <div class="modal-content">
+        <button class="close-btn" onclick="toggleModal('contact')">×</button>
+        <h2 style="margin-top:0; font-size: 1.5rem; letter-spacing: -0.02em;">Get in Touch.</h2>
+        <p style="color:var(--text-dim); line-height: 1.6;">
+            Have a question or feedback? We'd love to hear from you.
+        </p>
+        <a href="mailto:bauer@bauerhaus.io" style="display: inline-block; margin-top: 8px; color: var(--accent); font-weight: 500; text-decoration: none;">
+            bauer@bauerhaus.io →
+        </a>
+    </div>
+</div>
+
+<script>
+    function toggleModal(id) {
+        const modal = document.getElementById(id);
+        if (modal.classList.contains('open')) {
+            modal.classList.remove('open');
+        } else {
+            modal.classList.add('open');
+        }
+    }
+
+    window.onclick = function(event) {
+        ['about', 'privacy', 'contact'].forEach(id => {
+            const modal = document.getElementById(id);
+            if (event.target == modal) {
+                modal.classList.remove('open');
+            }
+        });
+    }
+</script>
+
+</body>
+</html>
