@@ -65,4 +65,6 @@ Every macOS application declares its own minimum and maximum window dimensions, 
 
 WindowSmith applies the requested geometry regardless, so the outcome stays predictable rather than arbitrary: the window is aligned to the top edge of its target zone and centred horizontally within it, then constrained to remain fully on-screen. A window that refuses to shrink therefore sits exactly where the layout intends, simply occupying more room than the zone allocates. Surrounding windows are unaffected and keep their assigned zones.
 
-In practice this is rare, and confined to a small number of applications with unusually rigid layouts.
+Display size determines how often this occurs. A zone is a fraction of the display it divides, so the smaller the screen and the more zones a layout defines, the likelier any single zone falls below some application's minimum. A three-column layout on a 13-inch built-in display allocates each zone roughly 490 points of width, which is narrower than many applications accept; the identical layout on a 27-inch external display leaves every zone with room to spare. If windows in a dense layout are not sizing as expected, selecting a layout with fewer zones generally resolves it.
+
+On larger displays this is rare, and confined to a small number of applications with unusually rigid layouts.
