@@ -4,12 +4,12 @@
         <title>WindowSmith</title>
         <item>
             <title>1.0</title>
-            <pubDate>Wed, 26 Aug 2026 18:32:20 -0500</pubDate>
+            <pubDate>Thu, 27 Aug 2026 11:42:12 -0500</pubDate>
             <link>https://bauerhaus.io/WindowSmith/</link>
-            <sparkle:version>9</sparkle:version>
+            <sparkle:version>10</sparkle:version>
             <sparkle:shortVersionString>1.0</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>13.0</sparkle:minimumSystemVersion>
-            <enclosure url="https://bauerhaus.io/WindowSmith/downloads/WindowSmith-1.0.dmg" length="7450721" type="application/octet-stream" sparkle:edSignature="61hnUm5wqMG4qzONoyfKsIN49PBW05x/OrcJlvqZKUoaE7ACUeC/zvdArH0y2wD0c92Dc+r3lzik/lcbmMS1CQ=="/>
+            <enclosure url="https://bauerhaus.io/WindowSmith/downloads/WindowSmith-1.0.dmg" length="7450611" type="application/octet-stream" sparkle:edSignature="4Lju1ZGHWSOIp9LdW/rHcy7MyFlPMiOem9nBNmlYLtxVfhpdTCSKA1rPBpBOHI1uMRwIvRbrQ7aaIwEs1b3oAQ=="/>
         </item>
     </channel>
 </rss>
