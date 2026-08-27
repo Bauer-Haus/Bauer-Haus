@@ -56,3 +56,13 @@ Inversion & Injection: Prior to injecting the new coordinates via AXUIElementSet
 Concurrency: To prevent the visual "stuttering" or "rubber-banding" often associated with resizing heavy applications (e.g., Xcode or web browsers), sizing and positioning commands are dispatched asynchronously on a background userInteractive queue. This utilizes a micro-sleep (usleep) buffer, allowing the target application's internal UI thread to synchronize before applying the final coordinate snap.
 
 Result: A window manipulation engine that executes instantaneously and reliably, regardless of the target application or the complexity of the user's monitor configuration.
+
+Known Constraint: Application-Enforced Size Limits
+
+Some windows cannot be sized to fill their target zone exactly, and the reason lies outside any window manager's control.
+
+Every macOS application declares its own minimum and maximum window dimensions, and the Accessibility API is not permitted to override them. When a window is asked to occupy a zone smaller than its declared minimum, the application clamps the request and settles at the nearest size it will accept. Windows marked as non-resizable decline the request entirely. This is enforced by the target application itself, not by WindowSmith, and it applies equally to Apple's own apps and to third-party software — utility windows, dialogs, and Electron-based applications tend to carry the most generous minimums.
+
+WindowSmith applies the requested geometry regardless, so the outcome stays predictable rather than arbitrary: the window is aligned to the top edge of its target zone and centred horizontally within it, then constrained to remain fully on-screen. A window that refuses to shrink therefore sits exactly where the layout intends, simply occupying more room than the zone allocates. Surrounding windows are unaffected and keep their assigned zones.
+
+In practice this is rare, and confined to a small number of applications with unusually rigid layouts.
